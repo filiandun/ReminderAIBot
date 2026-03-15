@@ -1,0 +1,6 @@
+@ReminderAIBot_HostAddress = http://localhost:5251
+
+GET {{ReminderAIBot_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
