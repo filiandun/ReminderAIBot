@@ -1,6 +1,0 @@
-[submodule "GigaChatService"]
-	path = GigaChatService
-	url = https://github.com/filiandun/GigaChatService.git
-[submodule "IAIChatService"]
-	path = IAIChatService
-	url = https://github.com/filiandun/AIChatService.git
