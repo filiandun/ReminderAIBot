@@ -6,7 +6,6 @@ using ReminderAIBot.Services.ReminderService;
 using ReminderAIBot.Services.Messenger.SenderService;
 using ReminderAIBot.Services.Messages.MessageBuilder;
 using ReminderAIBot.Services.Callbacks.CallbackDataParser;
-using ReminderAIBot.Models.Callback.Enums;
 using ReminderAIBot.Models.Callbacks;
 using ReminderAIBot.Models.Callbacks.Enums;
 using ReminderAIBot.Models.Callbacks.Domains;
@@ -49,13 +48,47 @@ namespace ReminderAIBot.Services.Callbacks.CallbackService
 
             switch (callbackData)
             {
-                case ChangePageCallbackData navigationCallbackData: await this.HandleNavigationAsync(navigationCallbackData, chatId, messageId); break;
+                case OpenScreenCallbackData openScreenCallbackData: await this.HandleOpenScreenAsync(openScreenCallbackData, chatId, messageId); break;
+                case ChangePageCallbackData changePageCallbackData: await this.HandleChangePageAsync(changePageCallbackData, chatId, messageId); break;
+
                 case ReminderCallbackData reminderCallbackData: await this.HandleReminderAsync(reminderCallbackData, chatId, messageId); break;
+                case TimeZoneCallbackData timeZoneCallbackData: await this.HandleTimeZoneAsync(timeZoneCallbackData, chatId, messageId); break;
 
                 default: this._logger.LogWarning($"handle: unknown type callback data: ({callbackData?.GetType() ?? null})"); break;
             }
         }
 
+
+        private async Task HandleOpenScreenAsync(OpenScreenCallbackData openScreenCallbackData, long chatId, int messageId)
+        {
+            switch (openScreenCallbackData.Screen)
+            {
+                case UiScreen.Home: await this._senderService.EditMessageAsync(chatId, messageId, new BotMessage() { Text = "Screen Home" }); break;
+
+                case UiScreen.NewReminder: await this._senderService.EditMessageAsync(chatId, messageId, new BotMessage() { Text = "Screen NewReminder" }); break;
+                case UiScreen.DraftReminder: await this._senderService.EditMessageAsync(chatId, messageId, new BotMessage() { Text = "Screen DraftReminder" }); break;
+                case UiScreen.EditReminder: await this._senderService.EditMessageAsync(chatId, messageId, new BotMessage() { Text = "Screen EditReminder" }); break;
+
+                case UiScreen.ReminderList: await this._senderService.EditMessageAsync(chatId, messageId, new BotMessage() { Text = "Screen ReminderList" }); break;
+                case UiScreen.TimeZoneList: await this._senderService.EditMessageAsync(chatId, messageId, new BotMessage() { Text = "Screen TimeZoneList" }); break;
+
+                case UiScreen.Settings: await this._senderService.EditMessageAsync(chatId, messageId, new BotMessage() { Text = "Screen Settings" }); break;
+
+                default: this._logger.LogWarning($"handle open screen: unknown screen: {openScreenCallbackData.Screen}"); break;
+            }
+        }
+
+        private async Task HandleChangePageAsync(ChangePageCallbackData changePageCallbackData, long chatId, int messageId)
+        {
+            // TODO надо подумать, как сделать нормально, так как тут костыли, так ещё и уйти можно за максимум страниц
+            // (благодаря PagedList, пробелм не будет, он будет просто возвращать полседнюю доступную страницу, хоть 99999 ему передай,
+            // однако проблема возникает дальше у builder, который к page + 1 делает, поэтому там до бесконечности дойти можно, а потом долго придётся возвращаться назад)
+            PagedList<Reminder> reminders = new PagedList<Reminder>(await this._reminderService.GetUserReminders(chatId), 5);
+
+            BotMessage botMessage = this._messageBuilder.RemindersList(reminders.GetPage(changePageCallbackData.Page).ToList(), changePageCallbackData.Page);
+
+            await this._senderService.EditMessageAsync(chatId, messageId, botMessage);
+        }
 
         private async Task HandleReminderAsync(ReminderCallbackData reminderCallbackData, long chatId, int messageId)
         {
@@ -81,40 +114,13 @@ namespace ReminderAIBot.Services.Callbacks.CallbackService
             }
         }
 
-        private async Task HandleNavigationAsync(ChangePageCallbackData navigationCallbackData, long chatId, int messageId)
-        {
-            switch (navigationCallbackData.Action)
-            {
-                case UiScreen.Move:
-                    // TODO надо подумать, как сделать нормально, так как тут костыли, так ещё и уйти можно за максимум страниц
-                    // (благодаря PagedList, пробелм не будет, он будет просто возвращать полседнюю доступную страницу, хоть 99999 ему передай,
-                    // однако проблема возникает дальше у builder, который к page + 1 делает, поэтому там до бесконечности дойти можно, а потом долго придётся возвращаться назад)
-                    PagedList<Reminder> reminders = new PagedList<Reminder>(await this._reminderService.GetUserReminders(chatId), 5);
-
-                    BotMessage botMessage = this._messageBuilder.RemindersList(reminders.GetPage(navigationCallbackData.Page).ToList(), navigationCallbackData.Page);
-
-                    await this._senderService.EditMessageAsync(chatId, messageId, botMessage);
-
-                    break;
-
-                default: this._logger.LogWarning($"handle navigation: unknown callback action: {navigationCallbackData.Action}"); break;
-            }
-        }
-
         private async Task HandleTimeZoneAsync(TimeZoneCallbackData timeZoneCallbackData, long chatId, int messageId)
         {
             switch (timeZoneCallbackData.Action)
             {
-                case TimeZoneAction.Set:
-                    PagedList<TimeZoneInfo> reminders = new PagedList<TimeZoneInfo>(TimeZoneInfo.GetSystemTimeZones().ToList(), 5);
+                case TimeZoneAction.Set: await this._senderService.EditMessageAsync(chatId, messageId, new BotMessage() { Text = "Set timeZone"}); break;
 
-                    BotMessage botMessage = this._messageBuilder.RemindersList(reminders.GetPage(timeZoneCallbackData.Page).ToList(), timeZoneCallbackData.Page);
-
-                    await this._senderService.EditMessageAsync(chatId, messageId, botMessage);
-
-                    break;
-
-                default: this._logger.LogWarning($"handle navigation: unknown callback action: {timeZoneCallbackData.Action}"); break;
+                default: this._logger.LogWarning($"handle timezone: unknown callback action: {timeZoneCallbackData.Action}"); break;
             }
         }
     }

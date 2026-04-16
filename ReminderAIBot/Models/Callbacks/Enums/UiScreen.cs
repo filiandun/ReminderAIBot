@@ -1,4 +1,4 @@
-﻿namespace ReminderAIBot.Models.Callback.Enums
+﻿namespace ReminderAIBot.Models.Callbacks.Enums
 {
     public enum UiScreen
     {
