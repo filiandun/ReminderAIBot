@@ -1,18 +1,20 @@
 ﻿using ReminderAIBot.Models.Database;
+
 using ReminderAIBot.Services.Repositories.ReminderRepository;
 using ReminderAIBot.Services.Repositories.UserRepository;
 
-namespace ReminderAIBot.Services.ReminderService
+
+namespace ReminderAIBot.Services.ReminderManager
 {
-    public class ReminderService : IReminderService
+    public class ReminderManager : IReminderManager
     {
-        private readonly ILogger<ReminderService> _logger;
+        private readonly ILogger<ReminderManager> _logger;
 
         private readonly IUserRepository _userRepository;
         private readonly IReminderRepository _reminderRepository;
 
 
-        public ReminderService(ILogger<ReminderService> logger, IUserRepository userRepository, IReminderRepository reminderRepository)
+        public ReminderManager(ILogger<ReminderManager> logger, IUserRepository userRepository, IReminderRepository reminderRepository)
         {
             this._logger = logger;
 

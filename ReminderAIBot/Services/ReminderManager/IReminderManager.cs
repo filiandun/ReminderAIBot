@@ -1,8 +1,9 @@
 ﻿using ReminderAIBot.Models.Database;
 
-namespace ReminderAIBot.Services.ReminderService
+
+namespace ReminderAIBot.Services.ReminderManager
 {
-    public interface IReminderService
+    public interface IReminderManager
     {
         public Task<List<Reminder>> GetUserReminders(long userId);
 
