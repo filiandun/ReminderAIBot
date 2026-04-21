@@ -1,6 +1,8 @@
 ﻿namespace ReminderAIBot.Models.Callbacks
 {
-    public abstract class CallbackData
+    public class CallbackData
     {
+        public Screen Screen { get; set; }
+        public ScreenAction Action { get; set; }
     }
 }
