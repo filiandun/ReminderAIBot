@@ -1,8 +1,8 @@
 ﻿using Telegram.Bot.Types;
 
-namespace ReminderAIBot.Services.Messages.MessageHandler
+namespace ReminderAIBot.Services.Handlers.UpdateHandler
 {
-    public interface IMessageHandler
+    public interface IUpdateHandler
     {
         public Task HandleAsync(Update update);
     }

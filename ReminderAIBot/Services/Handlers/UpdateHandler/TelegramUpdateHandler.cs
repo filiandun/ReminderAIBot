@@ -1,21 +1,20 @@
 ﻿using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using ReminderAIBot.Services.Handlers.MessageHandler;
+using ReminderAIBot.Services.Handlers.CallbackHandler;
 
-using ReminderAIBot.Services.Callbacks.CallbackService;
-using ReminderAIBot.Services.Messages.MessageService;
 
-
-namespace ReminderAIBot.Services.Messages.MessageHandler
+namespace ReminderAIBot.Services.Handlers.UpdateHandler
 {
-    public class MessageHandler : IMessageHandler
+    public class TelegramUpdateHandler : IUpdateHandler
     {
-        private readonly ILogger<MessageHandler> _logger;
+        private readonly ILogger<TelegramUpdateHandler> _logger;
 
-        private readonly IMessageService _messageService;
+        private readonly IMessageHandler _messageService;
         private readonly ICallbackService _callbackService;
 
 
-        public MessageHandler(ILogger<MessageHandler> logger, IMessageService messageService, ICallbackService callbackService)
+        public TelegramUpdateHandler(ILogger<TelegramUpdateHandler> logger, IMessageHandler messageService, ICallbackService callbackService)
         {
             this._logger = logger;
 
