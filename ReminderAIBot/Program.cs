@@ -9,17 +9,21 @@ using GigaChatServiceLib.Models.Config;
 using ReminderAIBot.Models;
 using ReminderAIBot.Services.ReminderParser;
 using ReminderAIBot.Services.ReminderService;
-using ReminderAIBot.Services.OnboardingService;
+
+using ReminderAIBot.Services.Handlers.UpdateHandler;
+using ReminderAIBot.Services.Handlers.MessageHandler;
+using ReminderAIBot.Services.Handlers.CallbackHandler;
+
 using ReminderAIBot.Services.Messenger.SenderService;
+using ReminderAIBot.Services.Messenger.ScreenRenderer;
 using ReminderAIBot.Services.Messenger.RecieverService;
-using ReminderAIBot.Services.Repositories.ReminderRepository;
-using ReminderAIBot.Services.Repositories.UserRepository;
-using ReminderAIBot.Services.Messages.MessageHandler;
-using ReminderAIBot.Services.Messages.MessageBuilder;
+using ReminderAIBot.Services.Messenger.OnboardingService;
+
 using ReminderAIBot.Services.Callbacks.CallbackDataParser;
 using ReminderAIBot.Services.Callbacks.CallbackDataBuilder;
-using ReminderAIBot.Services.Messages.MessageService;
-using ReminderAIBot.Services.Callbacks.CallbackService;
+
+using ReminderAIBot.Services.Repositories.UserRepository;
+using ReminderAIBot.Services.Repositories.ReminderRepository;
 
 
 namespace ReminderAIBot
@@ -51,19 +55,19 @@ namespace ReminderAIBot
             builder.Services.AddSingleton<IUserRepository, LocalUserRepository>();
             builder.Services.AddSingleton<IReminderRepository, LocalReminderRepository>();
 
-            builder.Services.AddSingleton<IMessageHandler, MessageHandler>();
+            builder.Services.AddSingleton<IUpdateHandler, TelegramUpdateHandler>();
 
             builder.Services.AddSingleton<IReminderParser, ReminderParser>();
             builder.Services.AddSingleton<IReminderService, ReminderService>();
 
-            builder.Services.AddSingleton<IMessageBuilder, MessageBuilder>();
+            builder.Services.AddSingleton<IScreenRenderer, ScreenRenderer>();
 
             builder.Services.AddSingleton<ICallbackDataBuilder, CallbackDataBuilder>();
             builder.Services.AddSingleton<ICallbackDataParser, CallbackDataParser>();
 
             builder.Services.AddSingleton<IOnboardingService, OnboardingService>();
 
-            builder.Services.AddSingleton<IMessageService, MessageService>();
+            builder.Services.AddSingleton<IMessageHandler, MessageHandler>();
             builder.Services.AddSingleton<ICallbackService, CallbackService>();
 
 

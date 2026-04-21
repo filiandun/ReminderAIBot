@@ -21,31 +21,31 @@ namespace ReminderAIBot.Services.Messenger.SenderService
         }
 
 
-        public async Task SendMessageAsync(long chatId, BotMessage message)
+        public async Task SendMessageAsync(long chatId, RenderedMessage message)
         {
-            if (message.Buttons is null)
+            if (message.InlineButtonRows is null)
             {
                 await this._telegramBotClient.SendMessage(chatId: new ChatId(chatId), text: message.Text, protectContent: true);
             }
             else
             {
-                InlineKeyboardMarkup inlineKeyboardMarkup = this.CreateInlineKeyboard(message.Buttons);
+                InlineKeyboardMarkup inlineKeyboardMarkup = this.CreateInlineKeyboard(message.InlineButtonRows);
 
                 await this._telegramBotClient.SendMessage(chatId: new ChatId(chatId), text: message.Text, protectContent: true, replyMarkup: inlineKeyboardMarkup);
             }
 
-            this._logger.LogInformation($"send: chatId [{chatId}] buttons count [{message.Buttons?.Count ?? 0}] text \"{message.Text.Take(40)}..\"");
+            this._logger.LogInformation($"send: chatId [{chatId}] buttons count [{message.InlineButtonRows?.Count ?? 0}] text \"{message.Text.Take(40)}..\"");
         }
 
 
-        public async Task EditMessageAsync(long chatId, int messageId, BotMessage message)
+        public async Task EditMessageAsync(long chatId, int messageId, RenderedMessage message)
         {
             await this._telegramBotClient.EditMessageText(chatId: new ChatId(chatId), messageId: messageId, message.Text);
 
-            InlineKeyboardMarkup inlineKeyboardMarkup = this.CreateInlineKeyboard(message.Buttons);
+            InlineKeyboardMarkup inlineKeyboardMarkup = this.CreateInlineKeyboard(message.InlineButtonRows);
             await this._telegramBotClient.EditMessageReplyMarkup(chatId: new ChatId(chatId), messageId: messageId, replyMarkup: inlineKeyboardMarkup);
 
-            this._logger.LogInformation($"edit: chatId [{chatId}] messageId [{messageId}] message text \"{message.Text.Take(40)}..\" buttons count [{message.Buttons?.Count ?? 0}]");
+            this._logger.LogInformation($"edit: chatId [{chatId}] messageId [{messageId}] message text \"{message.Text.Take(40)}..\" buttons count [{message.InlineButtonRows?.Count ?? 0}]");
         }
 
 
@@ -58,13 +58,13 @@ namespace ReminderAIBot.Services.Messenger.SenderService
 
 
         // TODO подумать над тем, как cделать многоуровневые кнопки (это больше вопрос к моделям)
-        private InlineKeyboardMarkup CreateInlineKeyboard(List<List<MessageButton>> buttons)
+        private InlineKeyboardMarkup CreateInlineKeyboard(List<InlineButtonRow> inlineButtonRows)
         {
             InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
-            foreach (List<MessageButton> rowButton in buttons)
+            foreach (InlineButtonRow inlineButtonRow in inlineButtonRows)
             {
-                foreach (MessageButton button in rowButton)
+                foreach (InlineButton button in inlineButtonRow)
                 {
                     inlineKeyboardMarkup.AddButton(button.Text, button.CallbackData ?? "unknown");
                 }

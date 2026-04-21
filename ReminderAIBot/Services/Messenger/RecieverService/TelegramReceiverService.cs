@@ -5,7 +5,6 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Polling;
 
 using ReminderAIBot.Models;
-using ReminderAIBot.Services.Messages.MessageHandler;
 
 
 namespace ReminderAIBot.Services.Messenger.RecieverService
@@ -18,10 +17,10 @@ namespace ReminderAIBot.Services.Messenger.RecieverService
         private readonly TelegramBotConfig _telegramBotConfig;
         private readonly ITelegramBotClient _telegramBotClient;
 
-        private readonly IMessageHandler _messageHandler;
+        private readonly Handlers.UpdateHandler.IUpdateHandler _messageHandler;
 
 
-        public TelegramReceiverService(ILogger<TelegramReceiverService> logger, IHostEnvironment hostEnvironment, IOptions<TelegramBotConfig> options, ITelegramBotClient telegramBotClient, IMessageHandler messageHandler)
+        public TelegramReceiverService(ILogger<TelegramReceiverService> logger, IHostEnvironment hostEnvironment, IOptions<TelegramBotConfig> options, ITelegramBotClient telegramBotClient, Handlers.UpdateHandler.IUpdateHandler messageHandler)
         {
             this._logger = logger;
             this._hostEnvironment = hostEnvironment;
