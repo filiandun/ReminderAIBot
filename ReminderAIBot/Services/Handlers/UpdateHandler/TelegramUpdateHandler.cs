@@ -11,10 +11,10 @@ namespace ReminderAIBot.Services.Handlers.UpdateHandler
         private readonly ILogger<TelegramUpdateHandler> _logger;
 
         private readonly IMessageHandler _messageService;
-        private readonly ICallbackService _callbackService;
+        private readonly ICallbackHandler _callbackService;
 
 
-        public TelegramUpdateHandler(ILogger<TelegramUpdateHandler> logger, IMessageHandler messageService, ICallbackService callbackService)
+        public TelegramUpdateHandler(ILogger<TelegramUpdateHandler> logger, IMessageHandler messageService, ICallbackHandler callbackService)
         {
             this._logger = logger;
 
