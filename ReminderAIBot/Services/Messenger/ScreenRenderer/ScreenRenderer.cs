@@ -71,7 +71,7 @@ namespace ReminderAIBot.Services.Messenger.ScreenRenderer
 
             if (model.Reminders is not null)
             {
-                foreach (Reminder reminder in model.Reminders.GetPage(1))
+                foreach (Reminder reminder in model.Reminders)
                 {
                     buttons.Add
                     (

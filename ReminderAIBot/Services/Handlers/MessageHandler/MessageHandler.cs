@@ -3,10 +3,9 @@ using ReminderAIBot.Models.Messages;
 using ReminderAIBot.Models.UI.ScreenModel;
 
 using ReminderAIBot.Services.ReminderParser;
-using ReminderAIBot.Services.ReminderService;
 using ReminderAIBot.Services.Messenger.SenderService;
 using ReminderAIBot.Services.Messenger.ScreenRenderer;
-using ReminderAIBot.Services.Messenger.OnboardingService;
+using ReminderAIBot.Services.ReminderManager;
 
 
 namespace ReminderAIBot.Services.Handlers.MessageHandler
@@ -17,15 +16,13 @@ namespace ReminderAIBot.Services.Handlers.MessageHandler
 
         private readonly ISenderService _senderService;
 
-        private readonly IReminderService _reminderService;
+        private readonly IReminderManager _reminderService;
         private readonly IReminderParser _reminderParser;
 
         private readonly IScreenRenderer _screenRenderer;
 
-        private readonly IOnboardingService _onboardingService;
 
-
-        public MessageHandler(ILogger<MessageHandler> logger, ISenderService senderService, IReminderService reminderService, IReminderParser reminderParser, IScreenRenderer messageBuilder, IOnboardingService onboardingService)
+        public MessageHandler(ILogger<MessageHandler> logger, ISenderService senderService, IReminderManager reminderService, IReminderParser reminderParser, IScreenRenderer messageBuilder)
         {
             this._logger = logger;
 
@@ -35,8 +32,6 @@ namespace ReminderAIBot.Services.Handlers.MessageHandler
             this._reminderParser = reminderParser;
 
             this._screenRenderer = messageBuilder;           
-
-            this._onboardingService = onboardingService;
         }
 
 

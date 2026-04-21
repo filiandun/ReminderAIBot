@@ -5,7 +5,7 @@ namespace ReminderAIBot.Models.UI.ScreenModel
 {
     public class RemindersListScreenModel : ScreenModel
     {
-        public PagedList<Reminder>? Reminders { get; set; }
+        public List<Reminder>? Reminders { get; set; }
         public int Page { get; set; }
         public bool HasNextPage { get; set; }
     }

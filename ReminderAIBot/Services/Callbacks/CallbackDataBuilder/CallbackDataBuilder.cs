@@ -1,15 +1,36 @@
-﻿using ReminderAIBot.Models.Callbacks.Enums;
+﻿using ReminderAIBot.Models.Callbacks;
 
 
 namespace ReminderAIBot.Services.Callbacks.CallbackDataBuilder
 {
     public class CallbackDataBuilder : ICallbackDataBuilder
     {
-        public string OpenScreen(UiScreen Screen) => $"open:{(int)Screen}";
-        public string ChangePage(int page) => $"page:{page}";
+        public string Build(Screen screen, ScreenAction action)
+        {
+            //string screenStr = screen switch
+            //{
+            //    Screen.Home => "home",
 
+            //    Screen.RemindersList => "remlist",
+            //    Screen.TimeZonesList => "tmzlist",
 
-        public string Reminder(ReminderAction action, int reminderId) => $"rem:{(int)action}:{reminderId}";
-        public string TimeZone(TimeZoneAction action, string timeZoneId) => $"tmz:{(int)action}:{timeZoneId}";
+            //    _ => throw new Exception("build: unknown callback")
+
+            //};
+
+            //string actionStr = action switch
+            //{
+            //    ScreenAction.Open => "open",
+
+            //    ScreenAction.NextPage => "next",
+            //    ScreenAction.PrevPage => "prev",
+
+            //    _ => throw new Exception("build: unknown callback")
+            //};
+
+            //return $"{screenStr}:{actionStr}";
+
+            return $"{(int)screen}:{(int)action}";
+        }
     }
 }

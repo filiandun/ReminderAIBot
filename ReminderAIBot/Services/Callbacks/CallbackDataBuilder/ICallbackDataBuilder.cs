@@ -1,15 +1,10 @@
-﻿using ReminderAIBot.Models.Callbacks.Enums;
+﻿using ReminderAIBot.Models.Callbacks;
 
 
 namespace ReminderAIBot.Services.Callbacks.CallbackDataBuilder
 {
     public interface ICallbackDataBuilder
     {
-        public string OpenScreen(UiScreen Screen);
-        public string ChangePage(int page);
-
-        public string Reminder(ReminderAction action, int reminderId);
-        public string TimeZone(TimeZoneAction action, string timeZoneId);
-
+        public string Build(Screen screen, ScreenAction action);
     }
 }
