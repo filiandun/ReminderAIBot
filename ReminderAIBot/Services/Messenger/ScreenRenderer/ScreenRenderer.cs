@@ -5,19 +5,16 @@ using ReminderAIBot.Models.Database;
 using ReminderAIBot.Models.Messages;
 using ReminderAIBot.Models.UI.ScreenModel;
 
-using ReminderAIBot.Services.Callbacks.CallbackDataBuilder;
+using ReminderAIBot.Services.Callbacks.CallbackDataCodec;
 
 
 namespace ReminderAIBot.Services.Messenger.ScreenRenderer
 {
     public class ScreenRenderer : IScreenRenderer
     {
-        private readonly ICallbackDataBuilder _callbackDataBuilder;
-
-
-        public ScreenRenderer(ICallbackDataBuilder callbackDataBuilder)
+        public ScreenRenderer()
         {
-            this._callbackDataBuilder = callbackDataBuilder;
+
         }
 
 
@@ -46,7 +43,7 @@ namespace ReminderAIBot.Services.Messenger.ScreenRenderer
             {
                 new InlineButtonRow() { InlineButtons = new List<InlineButton>()
                 {
-                    new InlineButton() { Text = $"Список напоминаний [{model.RemindersCount}]", CallbackData = this._callbackDataBuilder.Build(Screen.RemindersList, ScreenAction.Open) } }
+                    new InlineButton() { Text = $"Список напоминаний [{model.RemindersCount}]", CallbackData = CallbackDataCodec.Encode(Screen.RemindersList, NavigationAction.Open) } }
                 },
             };
 
@@ -86,11 +83,29 @@ namespace ReminderAIBot.Services.Messenger.ScreenRenderer
                 }
             }
 
+            //
+            List<InlineButton> paginationButtons = new();
+
+            if (model.HasPrevPage) paginationButtons.Add(new InlineButton() { Text = "<<", CallbackData = CallbackDataCodec.Encode(Screen.RemindersList, NavigationAction.Open, model.CurrentPage - 1) });
+
+            paginationButtons.Add(new InlineButton() { Text = $"{model.CurrentPage + 1} из {model.TotalPages + 1}", CallbackData = "-" });
+
+            if (model.HasNextPage) paginationButtons.Add(new InlineButton() { Text = ">>", CallbackData = CallbackDataCodec.Encode(Screen.RemindersList, NavigationAction.Open, model.CurrentPage + 1) });
+
+
+            InlineButtonRow paginationButtonRow = new()
+            {
+                InlineButtons = paginationButtons
+            };
+                
+            buttons.Add(paginationButtonRow);
+
+            //
             buttons.Add(new InlineButtonRow()
             {
                 InlineButtons = new List<InlineButton>()
                 {
-                    new InlineButton() { Text = $"Назад", CallbackData = this._callbackDataBuilder.Build(Screen.Home, ScreenAction.Open) }
+                    new InlineButton() { Text = $"Назад", CallbackData = CallbackDataCodec.Encode(Screen.Home, NavigationAction.Open) }
                 }
             });
 

@@ -17,14 +17,12 @@ using ReminderAIBot.Services.Messenger.SenderService;
 using ReminderAIBot.Services.Messenger.ScreenRenderer;
 using ReminderAIBot.Services.Messenger.RecieverService;
 
-using ReminderAIBot.Services.Callbacks.CallbackDataParser;
-using ReminderAIBot.Services.Callbacks.CallbackDataBuilder;
-
 using ReminderAIBot.Services.Repositories.UserRepository;
 using ReminderAIBot.Services.Repositories.ReminderRepository;
 using ReminderAIBot.Services.ReminderManager;
 using ReminderAIBot.Services.Applications.HomeApplicationService;
 using ReminderAIBot.Services.Applications.ReminderApplicationService;
+using ReminderAIBot.Services.Callbacks.CallbackDataCodec;
 
 
 namespace ReminderAIBot
@@ -57,9 +55,6 @@ namespace ReminderAIBot
 
             builder.Services.AddSingleton<IMessageHandler, MessageHandler>();
             builder.Services.AddSingleton<ICallbackHandler, CallbackHandler>();
-
-            builder.Services.AddSingleton<ICallbackDataBuilder, CallbackDataBuilder>();
-            builder.Services.AddSingleton<ICallbackDataParser, CallbackDataParser>();
 
             builder.Services.AddSingleton<IReminderParser, ReminderParser>();
 

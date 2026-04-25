@@ -4,7 +4,7 @@
     {
         Home,
 
-        NewReminder,
+        CreateReminder,
         EditReminder,
 
         RemindersList,
