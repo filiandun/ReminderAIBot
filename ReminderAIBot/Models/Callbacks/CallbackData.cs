@@ -1,6 +1,0 @@
-﻿namespace ReminderAIBot.Models.Callbacks
-{
-    public class CallbackData
-    {
-    }
-}
