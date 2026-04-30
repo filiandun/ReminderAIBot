@@ -18,7 +18,7 @@ namespace ReminderAIBot.Services.Applications.HomeApplicationService
 
         public async Task<HomeScreenModel> BuildHomeScreenModelAsync(long chatId)
         {
-            int reminderCount = (await this._reminderManager.GetUserReminders(chatId)).Count();
+            int reminderCount = (await this._reminderManager.GetRemindersList(chatId)).Count();
 
             return new HomeScreenModel()
             {

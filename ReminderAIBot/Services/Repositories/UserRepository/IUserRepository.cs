@@ -4,7 +4,7 @@ namespace ReminderAIBot.Services.Repositories.UserRepository
 {
     public interface IUserRepository
     {
-        public Task<User?> GetByTelegramId(long telegramId);
+        public Task<User?> GetByPlatformUserId(long platformUserId);
 
         public Task Add(User user);
         public Task Remove(User user);

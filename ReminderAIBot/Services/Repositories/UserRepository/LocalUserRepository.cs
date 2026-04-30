@@ -21,7 +21,7 @@ namespace ReminderAIBot.Services.Repositories.UserRepository
         }
 
 
-        public async Task<User?> GetByTelegramId(long telegramId) => this._db.FirstOrDefault(u => u.TelegramId == telegramId);
+        public async Task<User?> GetByPlatformUserId(long platformUserId) => this._db.FirstOrDefault(u => u.PlatformUserId == platformUserId);
 
         public async Task Add(User user)
         {
@@ -45,7 +45,7 @@ namespace ReminderAIBot.Services.Repositories.UserRepository
 
             if (originalUser is null) throw new Exception("update: user not found on db");
 
-            originalUser.TelegramId = user.TelegramId;
+            originalUser.PlatformUserId = user.PlatformUserId;
             originalUser.TimeZoneId = user.TimeZoneId;
 
             this.Save();
