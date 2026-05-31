@@ -6,23 +6,22 @@ using IAIChatServiceLib;
 using GigaChatServiceLib;
 using GigaChatServiceLib.Models.Config;
 
-using ReminderAIBot.Models;
-using ReminderAIBot.Services.ReminderParser;
+using ReminderAIBot.Application.Ports;
+using ReminderAIBot.Application.ReminderManager;
+using ReminderAIBot.Application.CommandUseCases.HomeCommandUseCases;
+using ReminderAIBot.Application.CommandUseCases.ReminderCommandUseCases;
 
-using ReminderAIBot.Services.Handlers.UpdateHandler;
-using ReminderAIBot.Services.Handlers.MessageHandler;
-using ReminderAIBot.Services.Handlers.CallbackHandler;
+using ReminderAIBot.Infrastructure.Messaging;
+using ReminderAIBot.Infrastructure.ReminderParser;
+using ReminderAIBot.Infrastructure.Messaging.SenderService;
+using ReminderAIBot.Infrastructure.Messaging.ReceiverService;
+using ReminderAIBot.Infrastructure.Repositories.UserRepository;
+using ReminderAIBot.Infrastructure.Repositories.ReminderRepository;
 
-using ReminderAIBot.Services.Messenger.SenderService;
-using ReminderAIBot.Services.Messenger.ScreenRenderer;
-using ReminderAIBot.Services.Messenger.RecieverService;
-
-using ReminderAIBot.Services.Repositories.UserRepository;
-using ReminderAIBot.Services.Repositories.ReminderRepository;
-using ReminderAIBot.Services.ReminderManager;
-using ReminderAIBot.Services.Applications.HomeApplicationService;
-using ReminderAIBot.Services.Applications.ReminderApplicationService;
-using ReminderAIBot.Services.Callbacks.CallbackDataCodec;
+using ReminderAIBot.Presentation.ScreenMessageBuilder;
+using ReminderAIBot.Presentation.Handlers.UpdateHandler;
+using ReminderAIBot.Presentation.Handlers.MessageHandler;
+using ReminderAIBot.Presentation.Handlers.CallbackHandler;
 
 
 namespace ReminderAIBot
@@ -58,10 +57,10 @@ namespace ReminderAIBot
 
             builder.Services.AddSingleton<IReminderParser, ReminderParser>();
 
-            builder.Services.AddSingleton<IHomeApplicationService, HomeApplicationService>();
-            builder.Services.AddSingleton<IReminderApplicationService, ReminderApplicationService>();
+            builder.Services.AddSingleton<IHomeCommandUseCases, HomeCommandUseCases>();
+            builder.Services.AddSingleton<IReminderCommandUseCases, ReminderCommandUseCases>();
 
-            builder.Services.AddSingleton<IScreenRenderer, ScreenRenderer>();
+            builder.Services.AddSingleton<IScreenMessageBuilder, ScreenMessageBuilder>();
 
             builder.Services.AddSingleton<IReminderManager, ReminderManager>();
 

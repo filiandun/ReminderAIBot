@@ -1,0 +1,18 @@
+﻿using System.Text.Json.Serialization;
+
+
+namespace ReminderAIBot.Domain
+{
+    public record User
+    {
+        public int Id { get; set; }
+
+        public long PlatformUserId { get; set; }
+
+        public string? TimeZoneId { get; set; }
+
+
+        [JsonIgnore]
+        public TimeZoneInfo? TimeZone => this.TimeZoneId is null ? null : TimeZoneInfo.FindSystemTimeZoneById(TimeZoneId);
+    }
+}
