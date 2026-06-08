@@ -1,8 +1,8 @@
 ﻿using ReminderAIBot.Domain;
 
-namespace ReminderAIBot.Application.ReminderManager
+namespace ReminderAIBot.Application.Ports
 {
-    public interface IReminderManager
+    public interface IReminderDataStore
     {
         public Task<Reminder> GetReminder(long platformUserId, int reminderId);
         public Task<List<Reminder>> GetRemindersList(long platfomrUserId);

@@ -1,5 +1,4 @@
-﻿using ReminderAIBot.Application.ReminderManager;
-
+﻿using ReminderAIBot.Application.Ports;
 using ReminderAIBot.Presentation.ScreenModels;
 
 
@@ -7,10 +6,10 @@ namespace ReminderAIBot.Application.CommandUseCases.HomeCommandUseCases
 {
     public class HomeCommandUseCases : IHomeCommandUseCases
     {
-        private readonly IReminderManager _reminderManager;
+        private readonly IReminderDataStore _reminderManager;
 
 
-        public HomeCommandUseCases(IReminderManager reminderManager)
+        public HomeCommandUseCases(IReminderDataStore reminderManager)
         {
             this._reminderManager = reminderManager;
         }

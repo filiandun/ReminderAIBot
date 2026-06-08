@@ -1,7 +1,6 @@
 ﻿using ReminderAIBot.Domain;
 
 using ReminderAIBot.Application.Ports;
-using ReminderAIBot.Application.ReminderManager;
 
 using ReminderAIBot.Infrastructure.Messaging.SenderService;
 
@@ -18,13 +17,13 @@ namespace ReminderAIBot.Presentation.Handlers.MessageHandler
 
         private readonly ISenderService _senderService;
 
-        private readonly IReminderManager _reminderService;
+        private readonly IReminderDataStore _reminderService;
         private readonly IReminderParser _reminderParser;
 
         private readonly IScreenMessageBuilder _screenRenderer;
 
 
-        public MessageHandler(ILogger<MessageHandler> logger, ISenderService senderService, IReminderManager reminderService, IReminderParser reminderParser, IScreenMessageBuilder messageBuilder)
+        public MessageHandler(ILogger<MessageHandler> logger, ISenderService senderService, IReminderDataStore reminderService, IReminderParser reminderParser, IScreenMessageBuilder messageBuilder)
         {
             this._logger = logger;
 

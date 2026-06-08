@@ -1,8 +1,7 @@
 ﻿using ReminderAIBot.Domain;
 
-using ReminderAIBot.Application.ReminderManager;
-
 using ReminderAIBot.Presentation.ScreenModels;
+using ReminderAIBot.Application.Ports;
 
 
 namespace ReminderAIBot.Application.CommandUseCases.ReminderCommandUseCases
@@ -11,10 +10,10 @@ namespace ReminderAIBot.Application.CommandUseCases.ReminderCommandUseCases
     {
         private readonly ILogger<ReminderCommandUseCases> _logger;
 
-        private readonly IReminderManager _reminderManager;
+        private readonly IReminderDataStore _reminderManager;
 
 
-        public ReminderCommandUseCases(ILogger<ReminderCommandUseCases> logger, IReminderManager reminderManager)
+        public ReminderCommandUseCases(ILogger<ReminderCommandUseCases> logger, IReminderDataStore reminderManager)
         {
             this._logger = logger;
             this._reminderManager = reminderManager;
@@ -55,8 +54,8 @@ namespace ReminderAIBot.Application.CommandUseCases.ReminderCommandUseCases
                 ReminderText = reminder.Text,
                 RawText = reminder.RawText,
 
-                RemindAt = reminder.RemindAt.DateTime.ToString("U"),
-                CreatedAt = reminder.CreatedAt.DateTime.ToString("U"),
+                RemindAt = reminder.RemindAtUtc.ToString("U"),
+                CreatedAt = reminder.CreatedAtUtc.ToString("U"),
             };
         }
     }

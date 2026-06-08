@@ -16,25 +16,36 @@ namespace ReminderAIBot.Infrastructure.ReminderParser
         private readonly IAIChatService _AIChatService;
 
         private string _template = "Ты — сервис для парсинга напоминаний." +
-            "Твоя задача: преобразовать текст пользователя в структурированный JSON." +
-            "Правила:" +
-            "1. Отвечай ТОЛЬКО валидным JSON, без пояснений, без текста до и после, без комментариев //." +
-            "2. Если данных недостаточно — заполняй поля null." +
-            "3. Дата и время должны быть в ISO 8601 формате (YYYY-MM-DDTHH:mm:ss)." +
-            "4. Если пользователь не указал дату, но указал время — используй ближайшую будущую дату." +
-            "5. Если указано \"завтра\", \"сегодня\", \"через X минут/часов\" — корректно интерпретируй." +
-            "6. Текущая дата и время: {{CURRENT_DATETIME}}" +
-            "Формат ответа:\r\n{\r\n  \"Text\": \"string\",          " +
-            "// текст напоминания\r\n  \"RemindAt\": \"string|null\", " +
-            "// дата и время\r\n  \"IsValid\": true|false      " +
-            "// удалось ли распарсить\r\n}\r\n\r\n" +
-            "Примеры:" +
-            "\r\n\r\n" +
-            "Вход:\r\n\"Напомни купить молоко завтра в 16:00\"\r\n\r\n" +
-            "Выход:\r\n{\r\n  \"text\": \"купить молоко\",\r\n  \"datetime\": \"2026-03-28T16:00:00\",\r\n  \"isValid\": true\r\n}\r\n\r\n" +
-            "Вход:\r\n\"Позвонить маме\"\r\n\r\n" +
-            "Выход:\r\n{\r\n  \"text\": \"позвонить маме\",\r\n  \"datetime\": null,\r\n  \"isValid\": false\r\n}\r\n\r\n" +
-            "Теперь обработай сообщение пользователя:\r\n\"{{USER_INPUT}}\"";
+                            "Твоя задача: преобразовать текст пользователя в структурированный JSON." +
+                            "Правила:" +
+                            "1. Отвечай ТОЛЬКО валидным JSON, без пояснений, без текста до и после, без комментариев //." +
+                            "2. Если данных недостаточно — заполняй поля null." +
+                            "3. Пользователь пишет время в своем локальном часовом поясе. Конвертируй его в UTC." +
+                            "4. Поле RemindAtUtc должно быть в ISO 8601 формате UTC: YYYY-MM-DDTHH:mm:ssZ." +
+                            "5. Если пользователь не указал дату, но указал время — используй ближайшую будущую дату в его часовом поясе." +
+                            "6. Если указано \"сегодня\", \"завтра\", \"через X минут/часов\" — корректно интерпретируй относительно локального времени пользователя." +
+                            "7. Текущая дата и время пользователя: {{CURRENT_DATETIME}}" +
+                            "8. Часовой пояс пользователя: {{CURRENT_TIMEZONE}}" +
+                            "Формат ответа:\r\n{\r\n" +
+                            "  \"Text\": \"string\",\r\n" +
+                            "  \"RemindAtUtc\": \"string|null\",\r\n" +
+                            "  \"IsValid\": true|false\r\n" +
+                            "}\r\n\r\n" +
+                            "Примеры:" +
+                            "\r\n\r\n" +
+                            "Вход:\r\n\"Напомни купить молоко завтра в 16:00\"\r\n\r\n" +
+                            "Выход:\r\n{\r\n" +
+                            "  \"Text\": \"купить молоко\",\r\n" +
+                            "  \"RemindAtUtc\": \"2026-03-28T13:00:00Z\",\r\n" +
+                            "  \"IsValid\": true\r\n" +
+                            "}\r\n\r\n" +
+                            "Вход:\r\n\"Позвонить маме\"\r\n\r\n" +
+                            "Выход:\r\n{\r\n" +
+                            "  \"Text\": \"позвонить маме\",\r\n" +
+                            "  \"RemindAtUtc\": null,\r\n" +
+                            "  \"IsValid\": false\r\n" +
+                            "}\r\n\r\n" +
+                            "Теперь обработай сообщение пользователя:\r\n\"{{USER_INPUT}}\"";
 
 
         public ReminderParser(ILogger<ReminderParser> logger, IAIChatService AIChatService)
@@ -57,14 +68,14 @@ namespace ReminderAIBot.Infrastructure.ReminderParser
             return this.MapToReminder(AIResponse, rawText);
         }
 
-
+        // TODO Replace("{{CURRENT_TIMEZONE}}" сделать, чтобы брался пользователя
         private AIRequest MapToAIRequest(string role, string text)
         {
             AIRequest AIRequest = new AIRequest()
             {
                 Messages = new List<AIMessage>() 
                 { 
-                    new AIMessage() { Role = "system", Content = this._template.Replace("{{USER_INPUT}}", text).Replace("{{CURRENT_DATETIME}}", DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss")) },
+                    new AIMessage() { Role = "system", Content = this._template.Replace("{{USER_INPUT}}", text).Replace("{{CURRENT_DATETIME}}", DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")).Replace("{{CURRENT_TIMEZONE}}", "Europe/Moscow") },
                 }
             };
 
@@ -76,19 +87,22 @@ namespace ReminderAIBot.Infrastructure.ReminderParser
         // пример метода для очистки в самом низу (CleanJson)
         private Reminder MapToReminder(AIResponse AIResponse, string rawText)
         {
+            string json = this.CleanJson(AIResponse.Message.Content);
+
+            this._logger.LogInformation("parse async: clear json\n{json}", json);
+
             // TODO добавить try catch
-            ReminderDraft? reminderDraft = JsonSerializer.Deserialize<ReminderDraft>(AIResponse.Message.Content);
+            ReminderDraft? reminderDraft = JsonSerializer.Deserialize<ReminderDraft>(json);
 
             if (reminderDraft is null)
             {
-                this._logger.LogCritical("Уёбище на GigaChat вставил свой комментарий в JSON БЛЯТЬ, 99.9%");
                 return new Reminder();
             }
 
             Reminder reminder = new Reminder()
             {
-                RemindAt = reminderDraft.RemindAt,
-                CreatedAt = DateTime.Now,
+                RemindAtUtc = reminderDraft.RemindAtUtc,
+                CreatedAtUtc = DateTime.UtcNow,
                 RawText = rawText,
                 Text = reminderDraft.Text,
             };
@@ -99,7 +113,7 @@ namespace ReminderAIBot.Infrastructure.ReminderParser
 
         private string CleanJson(string input)
         {
-            input = input.Replace("```json", "").Replace("```", "");
+            input = input.Replace("'```json", "").Replace("```", "");
 
             int start = input.IndexOf('{');
             if (start >= 0)

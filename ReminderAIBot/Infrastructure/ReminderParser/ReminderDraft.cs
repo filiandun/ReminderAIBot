@@ -8,8 +8,8 @@ namespace ReminderAIBot.Infrastructure.ReminderParser
         [JsonPropertyName("Text")]
         public string Text { get; set; } = string.Empty;
 
-        [JsonPropertyName("RemindAt")]
-        public DateTimeOffset RemindAt { get; set; }
+        [JsonPropertyName("RemindAtUtc")]
+        public DateTime RemindAtUtc { get; set; }
 
         [JsonPropertyName("IsValid")]
         public bool IsValid { get; set; }

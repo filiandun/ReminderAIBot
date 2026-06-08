@@ -1,22 +1,20 @@
 using DotNetEnv;
-
 using Telegram.Bot;
+using Microsoft.EntityFrameworkCore;
 
 using IAIChatServiceLib;
 using GigaChatServiceLib;
 using GigaChatServiceLib.Models.Config;
 
 using ReminderAIBot.Application.Ports;
-using ReminderAIBot.Application.ReminderManager;
 using ReminderAIBot.Application.CommandUseCases.HomeCommandUseCases;
 using ReminderAIBot.Application.CommandUseCases.ReminderCommandUseCases;
 
 using ReminderAIBot.Infrastructure.Messaging;
+using ReminderAIBot.Infrastructure.Persistence;
 using ReminderAIBot.Infrastructure.ReminderParser;
-using ReminderAIBot.Infrastructure.Messaging.SenderService;
 using ReminderAIBot.Infrastructure.Messaging.ReceiverService;
-using ReminderAIBot.Infrastructure.Repositories.UserRepository;
-using ReminderAIBot.Infrastructure.Repositories.ReminderRepository;
+using ReminderAIBot.Infrastructure.Messaging.SenderService;
 
 using ReminderAIBot.Presentation.ScreenMessageBuilder;
 using ReminderAIBot.Presentation.Handlers.UpdateHandler;
@@ -62,11 +60,7 @@ namespace ReminderAIBot
 
             builder.Services.AddSingleton<IScreenMessageBuilder, ScreenMessageBuilder>();
 
-            builder.Services.AddSingleton<IReminderManager, ReminderManager>();
-
-            builder.Services.AddSingleton<IUserRepository, LocalUserRepository>();
-            builder.Services.AddSingleton<IReminderRepository, LocalReminderRepository>();
-
+            builder.Services.AddSingleton<IReminderDataStore, ReminderDataStore>();
 
             builder.Services.AddSingleton<GigaChatConfig>();
 
@@ -75,6 +69,8 @@ namespace ReminderAIBot
                 ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator // TODO: remove in prod
             });
 
+            // add db context
+            builder.Services.AddDbContextFactory<ReminderDbContext>(options => options.UseNpgsql(builder.Configuration["DEFAULT_CONNECTION"]));
 
             // add TG bot client
             builder.Services.AddSingleton<ITelegramBotClient, TelegramBotClient>(sp =>

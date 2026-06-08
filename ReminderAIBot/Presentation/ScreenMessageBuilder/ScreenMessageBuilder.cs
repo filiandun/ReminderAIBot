@@ -78,7 +78,7 @@ namespace ReminderAIBot.Presentation.ScreenMessageBuilder
                         {
                             InlineButtons = new List<InlineButton>()
                             {
-                                new InlineButton() { Text = $"[{reminder.RemindAt.ToString("g")}]{reminder.Text}", CallbackData = CallbackDataCodec.Encode(new OpenReminderDetailsCommand(reminder.Id)) }
+                                new InlineButton() { Text = $"[{reminder.RemindAtUtc.ToString("g")}]{reminder.Text}", CallbackData = CallbackDataCodec.Encode(new OpenReminderDetailsCommand(reminder.Id)) }
                             }
                         }
                     );
