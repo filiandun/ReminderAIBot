@@ -75,7 +75,7 @@ namespace ReminderAIBot.Presentation.Handlers.MessageHandler
                     break;
 
                 case "/list":
-                    //PagedList<Reminder> reminders = new PagedList<Reminder>(await this._reminderService.GetUserReminders(chatId), 2);
+                    //PagedResult<Reminder> reminders = new PagedResult<Reminder>(await this._reminderService.GetUserReminders(chatId), 2);
 
                     //RenderedMessage botMessage = this._screenRenderer.RemindersList(reminders.GetPage(0).ToList(), 0);
 

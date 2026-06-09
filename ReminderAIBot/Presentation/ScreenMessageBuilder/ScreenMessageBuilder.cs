@@ -65,12 +65,11 @@ namespace ReminderAIBot.Presentation.ScreenMessageBuilder
             stringBuilder.AppendLine(model.Title);
             stringBuilder.AppendLine(model.Text);
 
-
             List<InlineButtonRow> buttons = new();
 
-            if (model.Reminders is not null)
+            if (model.HasReminders)
             {
-                foreach (Reminder reminder in model.Reminders)
+                foreach (Reminder reminder in model.Reminders.Items)
                 {
                     buttons.Add
                     (
@@ -83,24 +82,32 @@ namespace ReminderAIBot.Presentation.ScreenMessageBuilder
                         }
                     );
                 }
-            }
 
-            //
-            List<InlineButton> paginationButtons = new();
+                List<InlineButton> paginationButtons = new();
 
-            if (model.HasPrevPage) paginationButtons.Add(new InlineButton() { Text = "<<", CallbackData = CallbackDataCodec.Encode(new OpenRemindersListCommand(model.CurrentPage - 1)) });
+                if (model.Reminders.HasPrevPage) paginationButtons.Add(new InlineButton() { Text = "<<", CallbackData = CallbackDataCodec.Encode(new OpenRemindersListCommand(model.Reminders.PrevPage)) });
 
-            paginationButtons.Add(new InlineButton() { Text = $"{model.CurrentPage + 1} из {model.TotalPages + 1}", CallbackData = "-" });
+                paginationButtons.Add(new InlineButton() { Text = $"{model.Reminders.CurrentPage + 1} из {model.Reminders.TotalPages}", CallbackData = "-" });
 
-            if (model.HasNextPage) paginationButtons.Add(new InlineButton() { Text = ">>", CallbackData = CallbackDataCodec.Encode(new OpenRemindersListCommand(model.CurrentPage + 1)) });
+                if (model.Reminders.HasNextPage) paginationButtons.Add(new InlineButton() { Text = ">>", CallbackData = CallbackDataCodec.Encode(new OpenRemindersListCommand(model.Reminders.NextPage)) });
 
-
-            InlineButtonRow paginationButtonRow = new()
-            {
-                InlineButtons = paginationButtons
-            };
+                InlineButtonRow paginationButtonRow = new()
+                {
+                    InlineButtons = paginationButtons
+                };
                 
-            buttons.Add(paginationButtonRow);
+                buttons.Add(paginationButtonRow);
+            }
+            else
+            {
+                buttons.Add(new InlineButtonRow()
+                {
+                    InlineButtons = new List<InlineButton>()
+                    {
+                        new InlineButton() { Text = $"Напоминаний нет" }
+                    }
+                });
+            }
 
             //
             buttons.Add(new InlineButtonRow()

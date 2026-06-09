@@ -1,7 +1,9 @@
 ﻿using ReminderAIBot.Domain;
 
-using ReminderAIBot.Presentation.ScreenModels;
 using ReminderAIBot.Application.Ports;
+
+using ReminderAIBot.Presentation;
+using ReminderAIBot.Presentation.ScreenModels;
 
 
 namespace ReminderAIBot.Application.CommandUseCases.ReminderCommandUseCases
@@ -20,20 +22,19 @@ namespace ReminderAIBot.Application.CommandUseCases.ReminderCommandUseCases
         }
 
 
-        public async Task<RemindersListScreenModel> BuildRemindersListScreenModelAsync(long chatId, int page = 0, int pageSize = 5)
+        public async Task<RemindersListScreenModel> BuildRemindersListScreenModelAsync(long chatId, int currentPage = 0, int pageSize = 5)
         {
-            List<Reminder> reminders = (await this._reminderManager.GetRemindersList(chatId)).Skip(page * pageSize).Take(pageSize).ToList();
-            int remindersCount = (await this._reminderManager.GetRemindersList(chatId)).Count();
+            List<Reminder> reminders = (await this._reminderManager.GetRemindersList(chatId)).Skip(currentPage * pageSize).Take(pageSize).ToList();
+
+            int remindersCount = (await this._reminderManager.GetRemindersList(chatId)).Count;
+            int totalPages = (int)Math.Ceiling((double)remindersCount / pageSize);
 
             return new RemindersListScreenModel()
             {
                 Title = "Список ваших напоминаний",
                 Text = $"всего напоминаний: {remindersCount}",
 
-                Reminders = reminders,
-
-                CurrentPage = page,
-                TotalPages = (int)Math.Ceiling((double)remindersCount / pageSize)
+                Reminders = new PagedResult<Reminder>(reminders, currentPage, totalPages),
             };
         }
 
